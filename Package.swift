@@ -18,7 +18,7 @@ extension Target.Dependency {
 extension Target.Dependency {
     static var dependencies: Self { .product(name: "Dependencies", package: "swift-dependencies") }
     static var urlRouting: Self { .product(name: "URLRouting", package: "swift-url-routing") }
-    static var emailaddress: Self { .product(name: "EmailAddress", package: "swift-emailaddress-type") }
+    static var emailaddress: Self { .product(name: "EmailAddress", package: "swift-emailaddress-standard") }
     static var rfc6750: Self { .product(name: "RFC_6750", package: "swift-rfc-6750") }
     static var rfc7617: Self { .product(name: "RFC_7617", package: "swift-rfc-7617") }
 }
@@ -26,8 +26,8 @@ extension Target.Dependency {
 let package = Package(
     name: "swift-authenticating",
     platforms: [
-        .macOS(.v14),
-        .iOS(.v17)
+        .macOS(.v15),
+        .iOS(.v18)
     ],
     products: [
         .library(
@@ -37,8 +37,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.2"),
-        .package(url: "https://github.com/pointfreeco/swift-url-routing", from: "0.6.2"),
-        .package(url: "https://github.com/swift-standards/swift-emailaddress-type", from: "0.0.1"),
+        .package(path: "/Users/coen/Developer/coenttb/swift-url-routing"),
+        .package(url: "https://github.com/swift-standards/swift-emailaddress-standard", from: "0.0.1"),
         .package(url: "https://github.com/swift-standards/swift-rfc-6750", from: "0.0.1"),
         .package(url: "https://github.com/swift-standards/swift-rfc-7617", from: "0.0.1"),
     ],
