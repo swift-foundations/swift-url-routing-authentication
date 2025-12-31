@@ -48,15 +48,15 @@ extension RFC_7617.Basic {
     /// ```
     /// Authorization: Basic <base64(username:password)>
     /// ```
-    public struct Router: URLRouting.ParserPrinter, Sendable {
+    public struct Router: Parsing.ParserPrinter, Sendable {
 
         /// Creates a new Basic Authentication router.
         public init() {}
 
         /// The router body that handles the Authorization header.
         public var body: some URLRouting.Router<RFC_7617.Basic> {
-            URLRouting.Headers {
-                URLRouting.Field("Authorization") {
+            Headers {
+                RFC_7230.Header.Field("Authorization") {
                     RFC_7617.Basic.ParserPrinter()
                 }
             }
@@ -80,15 +80,15 @@ extension RFC_7617.Basic {
     ///
     /// - **Parsing**: Extracts credentials from "Basic <base64>" format
     /// - **Printing**: Generates base64-encoded "username:password" string
-    public struct ParserPrinter: URLRouting.ParserPrinter, Sendable {
+    public struct ParserPrinter: Parsing.ParserPrinter, Sendable {
 
         /// Creates a new Basic Authentication parser-printer.
         public init() {}
 
         /// The parser-printer body that handles credential encoding/decoding.
-        public var body: some URLRouting.ParserPrinter<Substring, RFC_7617.Basic> {
+        public var body: some Parsing.ParserPrinter<Substring, RFC_7617.Basic> {
             "Basic "
-            URLRouting.Parse(.string)
+            Parse(.string)
                 .map(
                     .convert(
                         apply: { try? RFC_7617.Basic.parse(from: "Basic \($0)") },

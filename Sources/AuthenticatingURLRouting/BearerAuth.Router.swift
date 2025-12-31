@@ -48,15 +48,15 @@ extension RFC_6750.Bearer {
     /// ```
     /// Authorization: Bearer <token>
     /// ```
-    public struct Router: URLRouting.ParserPrinter, Sendable {
+    public struct Router: Parsing.ParserPrinter, Sendable {
 
         /// Creates a new Bearer Authentication router.
         public init() {}
 
         /// The router body that handles the Authorization header.
         public var body: some URLRouting.Router<RFC_6750.Bearer> {
-            URLRouting.Headers {
-                URLRouting.Field("Authorization") {
+            Headers {
+                RFC_7230.Header.Field("Authorization") {
                     RFC_6750.Bearer.ParserPrinter()
                 }
             }
@@ -80,15 +80,15 @@ extension RFC_6750.Bearer {
     ///
     /// - **Parsing**: Extracts token from "Bearer <token>" format
     /// - **Printing**: Outputs the raw token string
-    public struct ParserPrinter: URLRouting.ParserPrinter, Sendable {
+    public struct ParserPrinter: Parsing.ParserPrinter, Sendable {
 
         /// Creates a new Bearer token parser-printer.
         public init() {}
 
         /// The parser-printer body that handles token extraction/insertion.
-        public var body: some URLRouting.ParserPrinter<Substring, RFC_6750.Bearer> {
+        public var body: some Parsing.ParserPrinter<Substring, RFC_6750.Bearer> {
             "Bearer "
-            URLRouting.Parse(.string)
+            Parse(.string)
                 .map(
                     .convert(
                         apply: { try? RFC_6750.Bearer.parse(from: "Bearer \($0)") },

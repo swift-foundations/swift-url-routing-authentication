@@ -353,7 +353,7 @@ struct AuthenticatingAPITests {
 
         #expect(requestData.headers["Authorization"]?.first == "Bearer test-token")
         #expect(requestData.path == ["items", "99"])
-        #expect(requestData.method == "GET")
+        #expect(requestData.method == .get)
     }
 
     //    @Test("API Router parses incoming request correctly")
