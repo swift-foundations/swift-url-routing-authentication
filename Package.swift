@@ -39,8 +39,8 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.2"),
         .package(path: "/Users/coen/Developer/coenttb/swift-url-routing"),
         .package(url: "https://github.com/swift-standards/swift-emailaddress-standard", from: "0.0.1"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-6750", from: "0.0.1"),
-        .package(url: "https://github.com/swift-standards/swift-rfc-7617", from: "0.0.1"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-6750", from: "0.0.1"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-7617", from: "0.0.1"),
     ],
     targets: [
         .target(
