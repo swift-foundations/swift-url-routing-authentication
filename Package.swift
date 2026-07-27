@@ -1,99 +1,79 @@
-// swift-tools-version:6.0
+// swift-tools-version: 6.3.3
 
-import Foundation
 import PackageDescription
 
-extension String {
-    static let authenticating: Self = "Authenticating"
-    static let authenticatingURLRouting: Self = "AuthenticatingURLRouting"
-    static let authenticatingEmailAddress: Self = "AuthenticatingEmailAddress"
-}
-
-extension Target.Dependency {
-    static var authenticating: Self { .target(name: .authenticating) }
-    static var authenticatingURLRouting: Self { .target(name: .authenticatingURLRouting) }
-    static var authenticatingEmailAddress: Self { .target(name: .authenticatingEmailAddress) }
-}
-
-extension Target.Dependency {
-    static var dependencies: Self { .product(name: "Dependencies", package: "swift-dependencies") }
-    static var urlRouting: Self { .product(name: "URLRouting", package: "swift-url-routing") }
-    static var emailaddress: Self { .product(name: "EmailAddress", package: "swift-emailaddress-standard") }
-    static var rfc6750: Self { .product(name: "RFC_6750", package: "swift-rfc-6750") }
-    static var rfc7617: Self { .product(name: "RFC_7617", package: "swift-rfc-7617") }
-}
-
 let package = Package(
-    name: "swift-authenticating",
+    name: "swift-url-routing-authentication",
     platforms: [
-        .macOS(.v15),
-        .iOS(.v18)
+        .iOS(.v26),
+        .macOS(.v26),
+        .tvOS(.v26),
+        .watchOS(.v26),
     ],
     products: [
+        // Foundation-free credential-routing vocabulary: the Authentication
+        // namespace, its typed error, and the Bearer/Basic Authorization-header
+        // routers over the RFC credential value types.
+        .library(name: "Authentication", targets: ["Authentication"]),
+        // Foundation interop: the Authentication.Client composition
+        // (Foundation.URL base, URLRequest construction, live URLSession-backed
+        // clients) plus the legacy `Authenticating` compat spelling layer.
         .library(
-            name: .authenticating,
-            targets: [.authenticating ]
+            name: "Authentication Foundation Integration",
+            targets: ["Authentication Foundation Integration"]
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.2"),
-        .package(path: "/Users/coen/Developer/coenttb/swift-url-routing"),
-        .package(url: "https://github.com/swift-standards/swift-emailaddress-standard", from: "0.0.1"),
-        .package(url: "https://github.com/swift-ietf/swift-rfc-6750", from: "0.0.1"),
-        .package(url: "https://github.com/swift-ietf/swift-rfc-7617", from: "0.0.1"),
+        .package(url: "https://github.com/swift-foundations/swift-url-routing.git", branch: "main"),
+        .package(url: "https://github.com/swift-foundations/swift-dependencies.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-6750.git", branch: "main"),
+        .package(url: "https://github.com/swift-ietf/swift-rfc-7617.git", branch: "main"),
+        .package(url: "https://github.com/swift-standards/swift-http-standard.git", branch: "main"),
     ],
     targets: [
         .target(
-            name: .authenticating,
+            name: "Authentication",
             dependencies: [
-                .authenticatingURLRouting,
-                .authenticatingEmailAddress,
-                .rfc6750,
-                .rfc7617,
-                .urlRouting,
-                .emailaddress,
-                .dependencies
+                .product(name: "URLRouting", package: "swift-url-routing"),
+                .product(name: "HTTP Standard", package: "swift-http-standard"),
+                .product(name: "RFC 6750", package: "swift-rfc-6750"),
+                .product(name: "RFC 7617", package: "swift-rfc-7617"),
             ]
         ),
         .target(
-            name: .authenticatingURLRouting,
+            name: "Authentication Foundation Integration",
             dependencies: [
-                .rfc6750,
-                .rfc7617,
-                .urlRouting
+                "Authentication",
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "URLRouting", package: "swift-url-routing"),
+                .product(name: "URL Routing Foundation Integration", package: "swift-url-routing"),
+                .product(name: "RFC 6750", package: "swift-rfc-6750"),
+                .product(name: "RFC 7617", package: "swift-rfc-7617"),
             ]
         ),
         .testTarget(
-            name: .authenticatingURLRouting.tests,
+            name: "Authentication Tests",
             dependencies: [
-                .authenticatingURLRouting
-            ]
-        ),
-        .target(
-            name: .authenticatingEmailAddress,
-            dependencies: [
-                .rfc6750,
-                .rfc7617,
-                .emailaddress
+                "Authentication"
             ]
         ),
         .testTarget(
-            name: .authenticatingEmailAddress.tests,
+            name: "Authentication Foundation Integration Tests",
             dependencies: [
-                .authenticatingEmailAddress,
-                .authenticatingURLRouting
+                "Authentication Foundation Integration",
+                .product(name: "Dependencies", package: "swift-dependencies"),
+                .product(name: "URL Routing Foundation Integration", package: "swift-url-routing"),
             ]
         ),
-        .testTarget(
-            name: .authenticating.tests,
-            dependencies: [
-                .authenticating,
-                .dependencies,
-                .product(name: "DependenciesMacros", package: "swift-dependencies")
-            ]
-        ),
-    ],
-    swiftLanguageModes: [.v6]
+    ]
 )
 
-extension String { var tests: Self { self + " Tests" } }
+for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
+    target.swiftSettings =
+        (target.swiftSettings ?? []) + [
+            .enableUpcomingFeature("ExistentialAny"),
+            .enableUpcomingFeature("InternalImportsByDefault"),
+            .enableUpcomingFeature("MemberImportVisibility"),
+            .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+        ]
+}
