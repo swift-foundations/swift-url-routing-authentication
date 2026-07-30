@@ -54,7 +54,8 @@ extension RFC_7617.Basic {
             try authorizationField.print(output, into: &input)
         }
 
-        public borrowing func serialize(_ output: Output, into buffer: inout Input) throws(Failure) {
+        public borrowing func serialize(_ output: Output, into buffer: inout Input) throws(Failure)
+        {
             try authorizationField.serialize(output, into: &buffer)
         }
     }

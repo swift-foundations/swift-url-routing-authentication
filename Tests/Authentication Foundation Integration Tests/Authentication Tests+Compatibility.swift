@@ -81,7 +81,10 @@ extension Authentication.Test.Integration {
         let request = try wrapper.client(Authentication.Test.EchoRouter.Route())
         #expect(request.url?.absoluteString == "https://api.example.com/v1")
         // RFC 7617 §2 example vector.
-        #expect(request.value(forHTTPHeaderField: "Authorization") == "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==")
+        #expect(
+            request.value(forHTTPHeaderField: "Authorization")
+                == "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
+        )
     }
 
     @Test
@@ -114,6 +117,10 @@ extension Authentication.Test.Integration {
         enum WrapperKey: Dependency.Key {
             typealias Value = Wrapper
             static var liveValue: Wrapper {
+                // `Dependency.Key.liveValue` is non-throwing; the literal
+                // baseURL/token below are fixed compile-time constants that
+                // cannot fail `Wrapper.init`, so there is no error to propagate.
+                // swiftlint:disable:next force_try
                 try! Wrapper(
                     baseURL: URL(string: "https://api.example.com/v1")!,
                     token: "tok"

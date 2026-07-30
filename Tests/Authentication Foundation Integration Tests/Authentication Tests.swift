@@ -100,7 +100,10 @@ extension Authentication.Test.Unit {
         #expect(request.url?.absoluteString == "https://api.example.com/v1")
         // RFC 7617 §2 example vector, printed by the credential router into
         // every request.
-        #expect(request.value(forHTTPHeaderField: "Authorization") == "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==")
+        #expect(
+            request.value(forHTTPHeaderField: "Authorization")
+                == "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ=="
+        )
     }
 }
 

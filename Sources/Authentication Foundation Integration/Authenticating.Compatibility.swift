@@ -16,8 +16,8 @@ public import Dependencies
 public import Foundation
 public import RFC_6750
 public import RFC_7617
-public import URL_Routing_Foundation_Integration
 public import URLRouting
+public import URL_Routing_Foundation_Integration
 
 #if canImport(FoundationNetworking)
     public import FoundationNetworking

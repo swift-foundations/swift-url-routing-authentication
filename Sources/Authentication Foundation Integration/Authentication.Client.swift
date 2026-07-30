@@ -11,8 +11,8 @@
 
 public import Authentication
 public import Foundation
-public import URL_Routing_Foundation_Integration
 public import URLRouting
+public import URL_Routing_Foundation_Integration
 
 #if canImport(FoundationNetworking)
     public import FoundationNetworking
